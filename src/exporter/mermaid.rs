@@ -2,13 +2,18 @@ use super::FileExporter;
 use crate::parser::{Matpars, Operator, Type};
 use std::{fs::File, io::Write};
 
+const MERMAID_HTML_PREFIX: &str = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\" /><title>matpars export</title></head><body><script src=\"https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js\"></script><div class=\"mermaid\">\ngraph TD\n";
+const MERMAID_HTML_SUFFIX: &str = "</div></body></html>";
+
 pub struct MermaidParser;
 
 impl FileExporter for MermaidParser {
     fn export(parsed: &Matpars, filename: &str) {
         let mut mermaid = String::from("");
 
-        let html:String = String::from("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\" /><title>matpars export</title></head><body><script src=\"https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js\"></script><div class=\"mermaid\">\ngraph TD\n") + to_mermaid(parsed, Option::None, &mut mermaid).as_str() + "</div></body></html>";
+        let html: String = MERMAID_HTML_PREFIX.to_string()
+            + to_mermaid(parsed, Option::None, &mut mermaid).as_str()
+            + MERMAID_HTML_SUFFIX;
 
         let mut file = File::create(format!("{}.html", filename)).unwrap();
         Write::write_all(&mut file, html.as_bytes()).unwrap();
