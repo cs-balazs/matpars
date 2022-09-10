@@ -5,9 +5,9 @@ use std::{fs::File, io::Write};
 const MERMAID_HTML_PREFIX: &str = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\" /><title>matpars export</title></head><body><script src=\"https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js\"></script><div class=\"mermaid\">\ngraph TD\n";
 const MERMAID_HTML_SUFFIX: &str = "</div></body></html>";
 
-pub struct MermaidParser;
+pub struct MermaidExporter;
 
-impl FileExporter for MermaidParser {
+impl FileExporter for MermaidExporter {
     fn export(parsed: &Matpars, filename: &str) {
         let mut mermaid = String::from("");
 

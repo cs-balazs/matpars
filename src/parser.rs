@@ -1,6 +1,8 @@
 use std::cell::Cell;
 
-pub mod treeparser;
+mod treeparser;
+
+pub use treeparser::TreeParser;
 
 #[derive(Debug)]
 pub enum Operator {

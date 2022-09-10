@@ -1,8 +1,45 @@
-use super::{Matpars, Operator, Type};
+use super::{Matpars, Operator, Parser, Type};
 use std::collections::HashMap;
 
 // Should be the maximum the values in the weights map + 1 to outpower everything outside the brackets
 const BRACKETS_EXTRA_WEIGHT: u32 = 4;
+
+pub struct TreeParser;
+
+impl Parser for TreeParser {
+    fn parse(input: &str) -> Matpars {
+        // TODO: Somehow construct this as a const
+        let weights: HashMap<char, u32> =
+            HashMap::from([('+', 1), ('-', 1), ('*', 2), ('/', 2), ('^', 3)]);
+
+        let mut input_copy = input.trim().replace(' ', "");
+        let mut extra_weight: u32 = 0;
+        let mut weights: Vec<u32> = input_copy
+            .clone()
+            .chars()
+            .map(|chr| {
+                if let Some(val) = weights.get(&chr) {
+                    *val + extra_weight
+                } else {
+                    if chr == '(' {
+                        extra_weight += BRACKETS_EXTRA_WEIGHT
+                    } else if chr == ')' {
+                        extra_weight -= BRACKETS_EXTRA_WEIGHT
+                    };
+                    0
+                }
+            })
+            .collect::<Vec<u32>>();
+
+        while let Some(index) = input_copy.find(|c: char| (c == '(') || (c == ')')) {
+            input_copy.remove(index);
+            weights.remove(index);
+        }
+
+        let tree = construct_tree(&input_copy, weights.as_slice());
+        tree
+    }
+}
 
 fn construct_tree(input: &String, weights: &[u32]) -> Matpars {
     let min_weight = {
@@ -59,37 +96,4 @@ fn construct_tree(input: &String, weights: &[u32]) -> Matpars {
         Some(construct_tree(&left, left_weights)),
         Some(construct_tree(&right, right_weights)),
     )
-}
-
-pub fn parse(input: &str) -> Matpars {
-    // TODO: Somehow construct this as a const
-    let weights: HashMap<char, u32> =
-        HashMap::from([('+', 1), ('-', 1), ('*', 2), ('/', 2), ('^', 3)]);
-
-    let mut input_copy = input.trim().replace(' ', "");
-    let mut extra_weight: u32 = 0;
-    let mut weights: Vec<u32> = input_copy
-        .clone()
-        .chars()
-        .map(|chr| {
-            if let Some(val) = weights.get(&chr) {
-                *val + extra_weight
-            } else {
-                if chr == '(' {
-                    extra_weight += BRACKETS_EXTRA_WEIGHT
-                } else if chr == ')' {
-                    extra_weight -= BRACKETS_EXTRA_WEIGHT
-                };
-                0
-            }
-        })
-        .collect::<Vec<u32>>();
-
-    while let Some(index) = input_copy.find(|c: char| (c == '(') || (c == ')')) {
-        input_copy.remove(index);
-        weights.remove(index);
-    }
-
-    let tree = construct_tree(&input_copy, weights.as_slice());
-    tree
 }

@@ -1,6 +1,8 @@
 use crate::parser::Matpars;
 
-pub mod mermaid;
+mod mermaid;
+
+pub use mermaid::MermaidExporter;
 
 pub trait FileExporter {
     fn export(parsed: &Matpars, filename: &str);
