@@ -15,6 +15,20 @@ impl FileExporter for MermaidParser {
     }
 }
 
+fn type_to_label(node_type: &Type) -> String {
+    match node_type {
+        Type::Operator(operator) => match operator {
+            Operator::Minus => String::from("\"-\""),
+            Operator::Plus => String::from("+"),
+            Operator::Times => String::from("*"),
+            Operator::Division => String::from("/"),
+            Operator::Power => String::from("^"),
+        },
+        Type::Constant(constant) => constant.to_string(),
+        Type::Variable(var) => String::from(var),
+    }
+}
+
 fn to_mermaid<'a>(
     formula: &Matpars,
     parent: Option<&Matpars>,
@@ -24,29 +38,9 @@ fn to_mermaid<'a>(
         *mermaid += format!(
             "   A{}(({})) --- A{}(({}))\n",
             parent.id,
-            match &parent.node_type {
-                Type::Operator(operator) => match operator {
-                    Operator::Minus => String::from("\"-\""),
-                    Operator::Plus => String::from("+"),
-                    Operator::Times => String::from("*"),
-                    Operator::Division => String::from("/"),
-                    Operator::Power => String::from("^"),
-                },
-                Type::Constant(constant) => constant.to_string(),
-                Type::Variable(var) => String::from(var),
-            },
+            type_to_label(&parent.node_type),
             formula.id,
-            match &formula.node_type {
-                Type::Operator(operator) => match operator {
-                    Operator::Minus => String::from("\"-\""),
-                    Operator::Plus => String::from("+"),
-                    Operator::Times => String::from("*"),
-                    Operator::Division => String::from("/"),
-                    Operator::Power => String::from("^"),
-                },
-                Type::Constant(constant) => constant.to_string(),
-                Type::Variable(var) => String::from(var),
-            }
+            type_to_label(&formula.node_type)
         )
         .as_str();
     }
