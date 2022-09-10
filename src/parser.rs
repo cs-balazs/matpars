@@ -45,7 +45,7 @@ impl Formula {
     }
 }
 
-fn construct_tree(input: String, weights: &[u32]) -> Formula {
+fn construct_tree(input: &String, weights: &[u32]) -> Formula {
     let min_weight = {
         let mut minimum = u32::MAX;
         for &weight in weights {
@@ -61,7 +61,11 @@ fn construct_tree(input: String, weights: &[u32]) -> Formula {
 
     if min_weight == 0 {
         if input.chars().all(char::is_alphabetic) {
-            return Formula::new(Node::Variable(input), Option::None, Option::None);
+            return Formula::new(
+                Node::Variable(input.to_string()),
+                Option::None,
+                Option::None,
+            );
         };
         if input.chars().all(char::is_numeric) {
             return Formula::new(
@@ -93,12 +97,12 @@ fn construct_tree(input: String, weights: &[u32]) -> Formula {
                 _ => panic!(),
             },
         ),
-        Some(construct_tree(left, left_weights)),
-        Some(construct_tree(right, right_weights)),
+        Some(construct_tree(&left, left_weights)),
+        Some(construct_tree(&right, right_weights)),
     )
 }
 
-pub fn parse(input: String) -> Formula {
+pub fn parse(input: &String) -> Formula {
     // TODO: Somehow construct this as a const
     let weights: HashMap<char, u32> =
         HashMap::from([('+', 1), ('-', 1), ('*', 2), ('/', 2), ('^', 3)]);
@@ -136,6 +140,6 @@ pub fn parse(input: String) -> Formula {
     //         .collect::<Vec<char>>()
     // );
 
-    let tree = construct_tree(input_copy, weights.as_slice());
+    let tree = construct_tree(&input_copy, weights.as_slice());
     tree
 }
