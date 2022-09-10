@@ -102,7 +102,7 @@ fn construct_tree(input: &String, weights: &[u32]) -> Formula {
     )
 }
 
-pub fn parse(input: &String) -> Formula {
+pub fn parse(input: &str) -> Formula {
     // TODO: Somehow construct this as a const
     let weights: HashMap<char, u32> =
         HashMap::from([('+', 1), ('-', 1), ('*', 2), ('/', 2), ('^', 3)]);
