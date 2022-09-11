@@ -4,22 +4,16 @@ use crate::{EvaluationError, Operator, Tree, Type};
 
 fn check_operands(tree: &Tree, operator: &Operator) -> Result<(), EvaluationError> {
     if tree.left.is_none() {
-        return Err(EvaluationError::new(
-            format!(
-                "Evaluation failed, a '{}' operation has no left operand.",
-                operator_to_symbol(operator)
-            )
-            .as_str(),
-        ));
+        return Err(EvaluationError::new(format!(
+            "Evaluation failed, a '{}' operation has no left operand.",
+            operator_to_symbol(operator)
+        )));
     }
     if tree.right.is_none() {
-        return Err(EvaluationError::new(
-            format!(
-                "Evaluation failed, a '{}' operation has no right operand.",
-                operator_to_symbol(operator)
-            )
-            .as_str(),
-        ));
+        return Err(EvaluationError::new(format!(
+            "Evaluation failed, a '{}' operation has no right operand.",
+            operator_to_symbol(operator)
+        )));
     }
     Ok(())
 }
@@ -47,9 +41,10 @@ pub fn eval_tree(tree: &Tree, values: &HashMap<String, f64>) -> Result<f64, Eval
             if let Some(val) = values.get(var) {
                 Ok(*val)
             } else {
-                Err(EvaluationError::new(
-                    format!("Value for variable '{}' not found", var).as_str(),
-                ))
+                Err(EvaluationError::new(format!(
+                    "Value for variable '{}' not found",
+                    var
+                )))
             }
         }
         Type::Operator(operator) => match operator {

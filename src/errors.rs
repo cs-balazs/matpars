@@ -25,7 +25,7 @@ impl Display for EvaluationError {
 }
 
 impl InvalidVariableError {
-    pub fn new(message: &str) -> InvalidVariableError {
+    pub fn new<T: Display>(message: T) -> InvalidVariableError {
         InvalidVariableError {
             message: message.to_string(),
         }
@@ -33,7 +33,7 @@ impl InvalidVariableError {
 }
 
 impl EvaluationError {
-    pub fn new(message: &str) -> EvaluationError {
+    pub fn new<T: Display>(message: T) -> EvaluationError {
         EvaluationError {
             message: message.to_string(),
         }
