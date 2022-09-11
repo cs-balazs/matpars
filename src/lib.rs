@@ -70,6 +70,9 @@ impl Matpars {
     pub fn eval_for(&self, values: HashMap<String, f64>) -> Result<f64, EvaluationError> {
         eval_tree(&self.tree, &values)
     }
+    pub fn find_root(&self) -> f64 {
+        todo!()
+    }
 }
 
 impl Tree {
