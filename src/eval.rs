@@ -90,7 +90,14 @@ pub fn eval_tree(tree: &Tree, values: &HashMap<String, f64>) -> Result<f64, Eval
 }
 
 fn operator_to_symbol(operator: &Operator) -> String {
-    let symbols: HashMap<Operator, String> = HashMap::from([(Operator::Plus, String::from("+"))]);
-
-    symbols.get(operator).unwrap().to_string()
+    HashMap::from([
+        (Operator::Plus, String::from("+")),
+        (Operator::Minus, String::from("-")),
+        (Operator::Times, String::from("*")),
+        (Operator::Division, String::from("/")),
+        (Operator::Power, String::from("^")),
+    ])
+    .get(operator)
+    .unwrap()
+    .to_string()
 }
