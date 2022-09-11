@@ -23,6 +23,7 @@ fn main() {
 
     println!(
         "{}",
+        // TODO: Macro for this (constucting a HashMap)
         parsed
             .eval_for(HashMap::from([
                 (String::from("x"), 1.1653414f64),
