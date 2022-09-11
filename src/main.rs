@@ -1,6 +1,6 @@
 use matpars::{
     self,
-    exporter::{self, FileExporter},
+    exporter::{self, FileExporter, StringExporter},
 };
 use std::io::{stdin, stdout, Write};
 
@@ -25,5 +25,10 @@ fn main() {
 
     println!("y = {}", parsed.eval().unwrap());
 
-    exporter::MermaidExporter::export(&parsed.tree, "mermaid");
+    exporter::MermaidExporter::export(&parsed, "mermaid");
+    println!("Exported to mermaid.html");
+    println!(
+        "In polish notation: {}",
+        exporter::PolishExporter::to_string(&parsed)
+    );
 }

@@ -1,5 +1,5 @@
 use super::{FileExporter, StringExporter};
-use crate::{Tree, Type};
+use crate::{Matpars, Tree, Type};
 use std::{fs::File, io::Write};
 
 pub const MERMAID_HTML_PREFIX: &str = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\" /><title>Tree export</title></head><body><script src=\"https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js\"></script><div class=\"mermaid\">\ngraph TD\n";
@@ -8,17 +8,17 @@ pub const MERMAID_HTML_SUFFIX: &str = "</div></body></html>";
 pub struct MermaidExporter;
 
 impl FileExporter for MermaidExporter {
-    fn export(parsed: &Tree, filename: &str) {
+    fn export(parsed: &Matpars, filename: &str) {
         let mut file = File::create(format!("{}.html", filename)).unwrap();
         Write::write_all(&mut file, MermaidExporter::to_string(parsed).as_bytes()).unwrap();
     }
 }
 
 impl StringExporter for MermaidExporter {
-    fn to_string(parsed: &Tree) -> String {
+    fn to_string(parsed: &Matpars) -> String {
         let mut mermaid = String::from("");
         MERMAID_HTML_PREFIX.to_string()
-            + to_mermaid(parsed, Option::None, &mut mermaid).as_str()
+            + to_mermaid(&parsed.tree, Option::None, &mut mermaid).as_str()
             + MERMAID_HTML_SUFFIX
     }
 }
@@ -71,7 +71,7 @@ mod tests {
 
     fn test_formula(formula: &str, filename: &str, mermaid: &str) {
         let parsed = parse(formula);
-        MermaidExporter::export(&parsed.tree, filename);
+        MermaidExporter::export(&parsed, filename);
 
         let file = fs::read(format!("{}.html", filename));
 

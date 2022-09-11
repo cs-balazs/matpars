@@ -1,13 +1,13 @@
-use crate::{Tree, Type};
+use crate::{Matpars, Tree, Type};
 
 use super::StringExporter;
 
 pub struct PolishExporter;
 
 impl StringExporter for PolishExporter {
-    fn to_string(parsed: &Tree) -> String {
+    fn to_string(parsed: &Matpars) -> String {
         let mut polish = String::new();
-        to_polish(parsed, &mut polish).to_string()
+        to_polish(&parsed.tree, &mut polish).to_string()
     }
 }
 
