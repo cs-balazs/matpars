@@ -1,23 +1,26 @@
+use std::io::{stdout, Write};
+
 use matpars::{
     self,
     exporter::{self, FileExporter},
-    values,
 };
 
 fn main() {
-    let mut parsed = matpars::parse("3* z - x^2 + 3*x + (8*x - 21*9) + 5 / ( 10 * a - 3 ) + x");
-    exporter::MermaidExporter::export(&parsed.tree, "mermaid");
+    let mut parsed =
+        matpars::parse("3 * z - x ^ 2 + 3 * x + ( 8 * x - 21 * 9 ) + 5 / ( 10 * a - 3 ) + x");
 
-    parsed.set_variable("x", 10.0f64).unwrap();
-    parsed.set_variable("x", 1.1653414f64).unwrap();
+    for name in parsed.variables.clone().keys() {
+        print!("{} = ", name);
+        stdout().flush().unwrap();
 
-    println!("{}", parsed.eval().unwrap());
-
-    println!(
-        "{}",
-        // TODO: Macro for this (constucting a HashMap)
+        let mut line = String::new();
+        std::io::stdin().read_line(&mut line).unwrap();
         parsed
-            .eval_for(values!["x" => 1.1653414f64, "z" => 0.0f64, "a" => 0.0f64])
-            .unwrap()
-    );
+            .variables
+            .insert(name.to_string(), line.trim().parse::<f64>().unwrap());
+    }
+
+    println!("y = {}", parsed.eval().unwrap());
+
+    exporter::MermaidExporter::export(&parsed.tree, "mermaid");
 }
