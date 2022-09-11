@@ -1,4 +1,4 @@
-use super::FileExporter;
+use super::{FileExporter, StringExporter};
 use crate::{Tree, Type};
 use std::{fs::File, io::Write};
 
@@ -9,14 +9,17 @@ pub struct MermaidExporter;
 
 impl FileExporter for MermaidExporter {
     fn export(parsed: &Tree, filename: &str) {
-        let mut mermaid = String::from("");
-
-        let html: String = MERMAID_HTML_PREFIX.to_string()
-            + to_mermaid(parsed, Option::None, &mut mermaid).as_str()
-            + MERMAID_HTML_SUFFIX;
-
         let mut file = File::create(format!("{}.html", filename)).unwrap();
-        Write::write_all(&mut file, html.as_bytes()).unwrap();
+        Write::write_all(&mut file, MermaidExporter::to_string(parsed).as_bytes()).unwrap();
+    }
+}
+
+impl StringExporter for MermaidExporter {
+    fn to_string(parsed: &Tree) -> String {
+        let mut mermaid = String::from("");
+        MERMAID_HTML_PREFIX.to_string()
+            + to_mermaid(parsed, Option::None, &mut mermaid).as_str()
+            + MERMAID_HTML_SUFFIX
     }
 }
 

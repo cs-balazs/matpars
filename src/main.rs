@@ -1,13 +1,14 @@
-use std::io::{stdout, Write};
-
 use matpars::{
     self,
-    exporter::{self, FileExporter},
+    exporter::{self, FileExporter, StringExporter},
 };
+use std::io::{stdout, Write};
 
 fn main() {
     let mut parsed =
-        matpars::parse("3 * z - x ^ 2 + 3 * x + ( 8 * x - 21 * 9 ) + 5 / ( 10 * a - 3 ) + x");
+        matpars::parse("3 * 1 - 12 ^ 2 + 3 * 12 + ( 8 * 42 - 21 * 9 ) + 5 / ( 10 * 2 - 3 ) + 243");
+
+    println!("{}", exporter::PolishExporter::to_string(&parsed.tree));
 
     for name in parsed.variables.clone().keys() {
         print!("{} = ", name);
