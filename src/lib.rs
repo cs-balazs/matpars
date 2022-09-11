@@ -3,12 +3,16 @@ pub mod exporter;
 // Should be the maximum the values in the weights map + 1 to outpower everything outside the brackets
 const BRACKETS_EXTRA_WEIGHT: u32 = 4;
 
+mod eval;
+
 use std::{
     cell::Cell,
     collections::HashMap,
     error::Error,
     fmt::{Display, Formatter},
 };
+
+use eval::eval_tree;
 
 #[derive(Debug, Hash, PartialEq, Eq)]
 pub enum Operator {
@@ -100,104 +104,6 @@ pub fn parse(input: &str) -> Matpars {
     collect_variables(&tree, &mut variables);
 
     Matpars { tree, variables }
-}
-
-fn operator_to_symbol(operator: &Operator) -> String {
-    let symbols: HashMap<Operator, String> = HashMap::from([(Operator::Plus, String::from("+"))]);
-
-    symbols.get(operator).unwrap().to_string()
-}
-
-fn check_operands(tree: &Tree, operator: &Operator) -> Result<(), EvaluationError> {
-    if tree.left.is_none() {
-        return Err(EvaluationError::new(
-            format!(
-                "Evaluation failed, a '{}' operation has no left operand.",
-                operator_to_symbol(operator)
-            )
-            .as_str(),
-        ));
-    }
-    if tree.right.is_none() {
-        return Err(EvaluationError::new(
-            format!(
-                "Evaluation failed, a '{}' operation has no right operand.",
-                operator_to_symbol(operator)
-            )
-            .as_str(),
-        ));
-    }
-    Ok(())
-}
-
-fn eval_sides(
-    tree: &Tree,
-    values: &HashMap<String, f64>,
-    operation: fn(f64, f64) -> f64,
-) -> Result<f64, EvaluationError> {
-    let left = eval_tree((*tree.left).as_ref().unwrap(), values);
-    if let Err(e) = left {
-        return Err(e);
-    }
-    let right = eval_tree((*tree.right).as_ref().unwrap(), values);
-    if let Err(e) = right {
-        return Err(e);
-    }
-    Ok(operation(left.unwrap(), right.unwrap()))
-}
-
-fn eval_tree(tree: &Tree, values: &HashMap<String, f64>) -> Result<f64, EvaluationError> {
-    let option: Result<f64, EvaluationError> = match &tree.node_type {
-        Type::Constant(val) => Ok(*val),
-        Type::Variable(var) => {
-            if let Some(val) = values.get(var) {
-                Ok(*val)
-            } else {
-                Err(EvaluationError::new(
-                    format!("Value for variable '{}' not found", var).as_str(),
-                ))
-            }
-        }
-        Type::Operator(operator) => match operator {
-            Operator::Plus => {
-                if let Err(e) = check_operands(tree, operator) {
-                    Err(e)
-                } else {
-                    eval_sides(tree, values, |a, b| a + b)
-                }
-            }
-            Operator::Minus => {
-                if let Err(e) = check_operands(tree, operator) {
-                    Err(e)
-                } else {
-                    eval_sides(tree, values, |a, b| a - b)
-                }
-            }
-            Operator::Times => {
-                if let Err(e) = check_operands(tree, operator) {
-                    Err(e)
-                } else {
-                    eval_sides(tree, values, |a, b| a * b)
-                }
-            }
-            Operator::Division => {
-                if let Err(e) = check_operands(tree, operator) {
-                    Err(e)
-                } else {
-                    eval_sides(tree, values, |a, b| a / b)
-                }
-            }
-            Operator::Power => {
-                if let Err(e) = check_operands(tree, operator) {
-                    Err(e)
-                } else {
-                    eval_sides(tree, values, f64::powf)
-                }
-            }
-        },
-    };
-
-    option
 }
 
 impl Tree {
