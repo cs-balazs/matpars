@@ -3,15 +3,12 @@ pub mod exporter;
 // Should be the maximum the values in the weights map + 1 to outpower everything outside the brackets
 const BRACKETS_EXTRA_WEIGHT: u32 = 4;
 
+mod errors;
 mod eval;
 
-use std::{
-    cell::Cell,
-    collections::HashMap,
-    error::Error,
-    fmt::{Display, Formatter},
-};
+use std::{cell::Cell, collections::HashMap};
 
+use errors::{EvaluationError, InvalidVariableError};
 use eval::eval_tree;
 
 #[derive(Debug, Hash, PartialEq, Eq)]
@@ -120,46 +117,6 @@ impl Tree {
         })
     }
 }
-
-#[derive(Debug)]
-pub struct InvalidVariableError {
-    message: String,
-}
-
-#[derive(Debug)]
-pub struct EvaluationError {
-    message: String,
-}
-
-impl Display for InvalidVariableError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
-        write!(f, "{}", self.message)
-    }
-}
-impl Display for EvaluationError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
-        write!(f, "{}", self.message)
-    }
-}
-
-impl InvalidVariableError {
-    fn new(message: &str) -> InvalidVariableError {
-        InvalidVariableError {
-            message: message.to_string(),
-        }
-    }
-}
-
-impl EvaluationError {
-    fn new(message: &str) -> EvaluationError {
-        EvaluationError {
-            message: message.to_string(),
-        }
-    }
-}
-
-impl Error for InvalidVariableError {}
-impl Error for EvaluationError {}
 
 fn construct_tree(input: &String, weights: &[u32]) -> Tree {
     let min_weight = {
