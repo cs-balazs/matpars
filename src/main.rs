@@ -1,9 +1,8 @@
-use std::collections::HashMap;
-
 use matpars::{
     self,
     exporter::{self, FileExporter},
 };
+use std::collections::HashMap;
 
 fn main() {
     let mut parsed = matpars::parse("3* z - x^2 + 3*x + (8*x - 21*9) + 5 / ( 10 * a - 3 ) + x");
