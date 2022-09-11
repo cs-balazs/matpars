@@ -56,19 +56,13 @@ fn construct_tree(input: &String, weights: &[u32]) -> Tree {
     };
 
     if min_weight == 0 {
-        if input.chars().all(char::is_alphabetic) {
-            return Tree::new(
+        return match input.parse::<f64>() {
+            Ok(val) => Tree::new(Type::Constant(val), Option::None, Option::None),
+            Err(_) => Tree::new(
                 Type::Variable(input.to_string()),
                 Option::None,
                 Option::None,
-            );
-        };
-        if input.chars().all(char::is_numeric) {
-            return Tree::new(
-                Type::Constant(input.parse::<f64>().unwrap()),
-                Option::None,
-                Option::None,
-            );
+            ),
         };
     };
 
