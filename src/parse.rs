@@ -1,4 +1,4 @@
-use crate::{Matpars, Operator, Tree, Type};
+use crate::{Matpars, Operation, Operator, Tree, Type};
 use std::collections::HashMap;
 
 // Should be the maximum the values in the weights map + 1 to outpower everything outside the brackets
@@ -85,11 +85,11 @@ fn construct_tree(input: &String, weights: &[u32]) -> Tree {
     Tree::new(
         Type::Operator(
             match input.chars().nth(rightmost_min_weight_index).unwrap() {
-                '+' => Operator::Plus,
-                '-' => Operator::Minus,
-                '*' => Operator::Times,
-                '/' => Operator::Division,
-                '^' => Operator::Power,
+                '+' => Operator::new(String::from("+"), Operation::Binary(|a, b| a + b)),
+                '-' => Operator::new(String::from("-"), Operation::Binary(|a, b| a - b)),
+                '*' => Operator::new(String::from("*"), Operation::Binary(|a, b| a * b)),
+                '/' => Operator::new(String::from("/"), Operation::Binary(|a, b| a / b)),
+                '^' => Operator::new(String::from("^"), Operation::Binary(f64::powf)),
                 _ => panic!(),
             },
         ),

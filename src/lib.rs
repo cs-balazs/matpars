@@ -8,13 +8,22 @@ use eval::eval_tree;
 pub use parse::parse;
 use std::{cell::Cell, collections::HashMap};
 
+#[derive(Debug)]
+pub struct Operator {
+    pub symbol: String,
+    pub operation: Operation,
+}
+
+impl Operator {
+    fn new(symbol: String, operation: Operation) -> Operator {
+        Operator { symbol, operation }
+    }
+}
+
 #[derive(Debug, Hash, PartialEq, Eq)]
-pub enum Operator {
-    Plus,
-    Minus,
-    Times,
-    Division,
-    Power,
+pub enum Operation {
+    Unary(fn(f64) -> f64),
+    Binary(fn(f64, f64) -> f64),
 }
 
 thread_local!(static NODE_ID: Cell<usize> = Cell::new(0));
