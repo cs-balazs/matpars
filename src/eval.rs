@@ -1,6 +1,5 @@
-use std::collections::HashMap;
-
 use crate::{EvaluationError, Operator, Tree, Type};
+use std::collections::HashMap;
 
 fn check_operands(tree: &Tree, operator: &Operator) -> Result<(), EvaluationError> {
     if tree.left.is_none() {
