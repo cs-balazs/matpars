@@ -2,7 +2,7 @@ use crate::{EvaluationError, Operation, Tree, Type};
 use std::collections::HashMap;
 
 pub fn eval_tree(tree: &Tree, values: &HashMap<String, f64>) -> Result<f64, EvaluationError> {
-    let option: Result<f64, EvaluationError> = match &tree.node_type {
+    match &tree.node_type {
         Type::Constant(val) => Ok(*val),
         Type::Variable(var) => {
             if let Some(val) = values.get(var) {
@@ -42,7 +42,82 @@ pub fn eval_tree(tree: &Tree, values: &HashMap<String, f64>) -> Result<f64, Eval
                 Ok(op(left.unwrap(), right.unwrap()))
             }
         },
-    };
+    }
+}
 
-    option
+#[cfg(test)]
+mod tests {
+    use std::collections::HashMap;
+
+    use crate::parse;
+
+    #[test]
+    fn plus() {
+        let parsed = parse("10 + x");
+
+        let y = parsed
+            .eval_for(HashMap::from([(String::from("x"), 10.0f64)]))
+            .unwrap();
+        assert_eq!(y, 20.0f64);
+
+        let y = parsed
+            .eval_for(HashMap::from([(String::from("x"), 4.0f64)]))
+            .unwrap();
+        assert_eq!(y, 14.0f64);
+    }
+
+    #[test]
+    fn minus() {
+        let parsed = parse("100 - x - 10");
+
+        let y = parsed
+            .eval_for(HashMap::from([(String::from("x"), 20.0f64)]))
+            .unwrap();
+        assert_eq!(y, 70.0f64);
+
+        let y = parsed
+            .eval_for(HashMap::from([(String::from("x"), 1.0f64)]))
+            .unwrap();
+        assert_eq!(y, 89.0f64);
+    }
+
+    #[test]
+    fn times() {
+        let parsed = parse("4 * x");
+
+        let y = parsed
+            .eval_for(HashMap::from([(String::from("x"), 2.0f64)]))
+            .unwrap();
+        assert_eq!(y, 8.0f64);
+
+        let y = parsed
+            .eval_for(HashMap::from([(String::from("x"), 110.0f64)]))
+            .unwrap();
+        assert_eq!(y, 440.0f64);
+    }
+
+    #[test]
+    fn division() {
+        let parsed = parse("x / 10");
+
+        let y = parsed
+            .eval_for(HashMap::from([(String::from("x"), 100.0f64)]))
+            .unwrap();
+        assert_eq!(y, 10.0f64);
+    }
+
+    #[test]
+    fn power() {
+        let parsed = parse("2 ^ x");
+
+        let y = parsed
+            .eval_for(HashMap::from([(String::from("x"), 2.0f64)]))
+            .unwrap();
+        assert_eq!(y, 4.0f64);
+
+        let y = parsed
+            .eval_for(HashMap::from([(String::from("x"), 4.0f64)]))
+            .unwrap();
+        assert_eq!(y, 16.0f64);
+    }
 }
