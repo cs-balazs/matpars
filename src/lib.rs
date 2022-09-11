@@ -121,10 +121,6 @@ impl Tree {
     }
 }
 
-pub trait Parser {
-    fn parse(input: &str) -> Matpars;
-}
-
 #[derive(Debug)]
 pub struct InvalidVariableError {
     message: String,
