@@ -1,4 +1,4 @@
-use super::{Matpars, Operator, Parser, Type};
+use super::{Matpars, Operator, Parser, Tree, Type};
 use std::collections::HashMap;
 
 // Should be the maximum the values in the weights map + 1 to outpower everything outside the brackets
@@ -37,11 +37,15 @@ impl Parser for TreeParser {
         }
 
         let tree = construct_tree(&input_copy, weights.as_slice());
-        tree
+
+        let mut variables: HashMap<String, f64> = HashMap::new();
+        collect_variables(&tree, &mut variables);
+
+        Matpars { tree, variables }
     }
 }
 
-fn construct_tree(input: &String, weights: &[u32]) -> Matpars {
+fn construct_tree(input: &String, weights: &[u32]) -> Tree {
     let min_weight = {
         let mut minimum = u32::MAX;
         for &weight in weights {
@@ -57,14 +61,14 @@ fn construct_tree(input: &String, weights: &[u32]) -> Matpars {
 
     if min_weight == 0 {
         if input.chars().all(char::is_alphabetic) {
-            return Matpars::new(
+            return Tree::new(
                 Type::Variable(input.to_string()),
                 Option::None,
                 Option::None,
             );
         };
         if input.chars().all(char::is_numeric) {
-            return Matpars::new(
+            return Tree::new(
                 Type::Constant(input.parse::<f64>().unwrap()),
                 Option::None,
                 Option::None,
@@ -82,7 +86,7 @@ fn construct_tree(input: &String, weights: &[u32]) -> Matpars {
     let left_weights = &weights[0..rightmost_min_weight_index];
     let right_weights = &weights[rightmost_min_weight_index + 1..];
 
-    Matpars::new(
+    Tree::new(
         Type::Operator(
             match input.chars().nth(rightmost_min_weight_index).unwrap() {
                 '+' => Operator::Plus,
@@ -96,4 +100,18 @@ fn construct_tree(input: &String, weights: &[u32]) -> Matpars {
         Some(construct_tree(&left, left_weights)),
         Some(construct_tree(&right, right_weights)),
     )
+}
+
+fn collect_variables(tree: &Tree, variables: &mut HashMap<String, f64>) {
+    if let Type::Variable(var) = &tree.node_type {
+        variables.insert(var.to_string(), 0.0f64);
+    }
+
+    if let Some(left) = &*tree.left {
+        collect_variables(left, variables);
+    }
+
+    if let Some(right) = &*tree.right {
+        collect_variables(right, variables);
+    }
 }

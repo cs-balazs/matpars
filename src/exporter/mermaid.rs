@@ -1,14 +1,14 @@
 use super::FileExporter;
-use crate::parser::{Matpars, Operator, Type};
+use crate::parser::{Operator, Tree, Type};
 use std::{fs::File, io::Write};
 
-pub const MERMAID_HTML_PREFIX: &str = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\" /><title>matpars export</title></head><body><script src=\"https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js\"></script><div class=\"mermaid\">\ngraph TD\n";
+pub const MERMAID_HTML_PREFIX: &str = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\" /><title>Tree export</title></head><body><script src=\"https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js\"></script><div class=\"mermaid\">\ngraph TD\n";
 pub const MERMAID_HTML_SUFFIX: &str = "</div></body></html>";
 
 pub struct MermaidExporter;
 
 impl FileExporter for MermaidExporter {
-    fn export(parsed: &Matpars, filename: &str) {
+    fn export(parsed: &Tree, filename: &str) {
         let mut mermaid = String::from("");
 
         let html: String = MERMAID_HTML_PREFIX.to_string()
@@ -35,8 +35,8 @@ fn type_to_label(node_type: &Type) -> String {
 }
 
 fn to_mermaid<'a>(
-    formula: &Matpars,
-    parent: Option<&Matpars>,
+    formula: &Tree,
+    parent: Option<&Tree>,
     mermaid: &'a mut String,
 ) -> &'a mut String {
     if let Some(parent) = parent {
@@ -74,7 +74,7 @@ mod tests {
 
     fn test_formula(formula: &str, filename: &str, mermaid: &str) {
         let parsed = TreeParser::parse(formula);
-        MermaidExporter::export(&parsed, filename);
+        MermaidExporter::export(&parsed.tree, filename);
 
         let file = fs::read(format!("{}.html", filename));
 
