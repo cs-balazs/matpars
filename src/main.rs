@@ -1,21 +1,23 @@
 use matpars::{
     self,
-    exporter::{self, FileExporter, StringExporter},
+    exporter::{self, FileExporter},
 };
-use std::io::{stdout, Write};
+use std::io::{stdin, stdout, Write};
 
 fn main() {
-    let mut parsed =
-        matpars::parse("3 * 1 - 12 ^ 2 + 3 * 12 + ( 8 * 42 - 21 * 9 ) + 5 / ( 10 * 2 - 3 ) + 243");
+    print!("formula = ");
+    stdout().flush().unwrap();
 
-    println!("{}", exporter::PolishExporter::to_string(&parsed.tree));
+    let mut input = String::new();
+    stdin().read_line(&mut input).unwrap();
+    let mut parsed = matpars::parse(input.as_str());
 
     for name in parsed.variables.clone().keys() {
         print!("{} = ", name);
         stdout().flush().unwrap();
 
         let mut line = String::new();
-        std::io::stdin().read_line(&mut line).unwrap();
+        stdin().read_line(&mut line).unwrap();
         parsed
             .variables
             .insert(name.to_string(), line.trim().parse::<f64>().unwrap());
