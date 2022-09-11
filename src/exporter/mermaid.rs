@@ -1,5 +1,5 @@
 use super::FileExporter;
-use crate::parser::{Operator, Tree, Type};
+use crate::{Operator, Tree, Type};
 use std::{fs::File, io::Write};
 
 pub const MERMAID_HTML_PREFIX: &str = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\" /><title>Tree export</title></head><body><script src=\"https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js\"></script><div class=\"mermaid\">\ngraph TD\n";
@@ -68,12 +68,12 @@ mod tests {
             mermaid::{MERMAID_HTML_PREFIX, MERMAID_HTML_SUFFIX},
             FileExporter, MermaidExporter,
         },
-        parser::{Parser, TreeParser},
+        parse,
     };
     use std::fs;
 
     fn test_formula(formula: &str, filename: &str, mermaid: &str) {
-        let parsed = TreeParser::parse(formula);
+        let parsed = parse(formula);
         MermaidExporter::export(&parsed.tree, filename);
 
         let file = fs::read(format!("{}.html", filename));

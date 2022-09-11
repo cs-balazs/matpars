@@ -1,4 +1,4 @@
-use crate::parser::Tree;
+use crate::Tree;
 
 mod mermaid;
 

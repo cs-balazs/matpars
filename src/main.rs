@@ -1,13 +1,12 @@
 use std::collections::HashMap;
 
 use matpars::{
+    self,
     exporter::{self, FileExporter},
-    parser::{self, Parser},
 };
 
 fn main() {
-    let mut parsed =
-        parser::TreeParser::parse("3* z - x^2 + 3*x + (8*x - 21*9) + 5 / ( 10 * a - 3 ) + x");
+    let mut parsed = matpars::parse("3* z - x^2 + 3*x + (8*x - 21*9) + 5 / ( 10 * a - 3 ) + x");
     exporter::MermaidExporter::export(&parsed.tree, "mermaid");
 
     println!("{:?}", parsed.variables);
