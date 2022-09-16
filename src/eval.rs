@@ -25,31 +25,27 @@ pub fn eval_tree(tree: &Tree, values: &HashMap<String, f64>) -> Result<f64, Eval
         }
         Type::Operator(operator) => match operator.operation {
             Operation::Unary(_) => todo!(),
-            Operation::Binary(op) => {
-                if tree.left.is_none() {
-                    return Err(EvaluationError(format!(
-                        "Evaluation failed, a '{}' operation has no left operand.",
-                        operator.symbol
-                    )));
-                }
-
-                if tree.right.is_none() {
-                    return Err(EvaluationError(format!(
-                        "Evaluation failed, a '{}' operation has no right operand.",
-                        operator.symbol
-                    )));
-                }
-
-                let left = eval_tree((*tree.left).as_ref().unwrap(), values);
-                if let Err(e) = left {
-                    return Err(e);
-                }
-                let right = eval_tree((*tree.right).as_ref().unwrap(), values);
-                if let Err(e) = right {
-                    return Err(e);
-                }
-                Ok(op(left.unwrap(), right.unwrap()))
-            }
+            Operation::Binary(op) => match (tree.left.as_ref(), tree.right.as_ref()) {
+                (None, None) => Err(EvaluationError(format!(
+                    "Evaluation failed, a '{}' operation has no operands.",
+                    operator.symbol
+                ))),
+                (None, _) => Err(EvaluationError(format!(
+                    "Evaluation failed, a '{}' operation has no left operand.",
+                    operator.symbol
+                ))),
+                (_, None) => Err(EvaluationError(format!(
+                    "Evaluation failed, a '{}' operation has no right operand.",
+                    operator.symbol
+                ))),
+                (Some(ref left), Some(ref right)) => match eval_tree(left, values) {
+                    Err(e) => Err(e),
+                    Ok(evaled_left) => match eval_tree(right, values) {
+                        Err(e) => Err(e),
+                        Ok(evaled_right) => Ok(op(evaled_left, evaled_right)),
+                    },
+                },
+            },
         },
     }
 }
