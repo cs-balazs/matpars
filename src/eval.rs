@@ -17,7 +17,7 @@ pub fn eval_tree(tree: &Tree, values: &HashMap<String, f64>) -> Result<f64, Eval
             if let Some(val) = values.get(var) {
                 Ok(*val)
             } else {
-                Err(EvaluationError::new(format!(
+                Err(EvaluationError(format!(
                     "Value for variable '{}' not found",
                     var
                 )))
@@ -27,14 +27,14 @@ pub fn eval_tree(tree: &Tree, values: &HashMap<String, f64>) -> Result<f64, Eval
             Operation::Unary(_) => todo!(),
             Operation::Binary(op) => {
                 if tree.left.is_none() {
-                    return Err(EvaluationError::new(format!(
+                    return Err(EvaluationError(format!(
                         "Evaluation failed, a '{}' operation has no left operand.",
                         operator.symbol
                     )));
                 }
 
                 if tree.right.is_none() {
-                    return Err(EvaluationError::new(format!(
+                    return Err(EvaluationError(format!(
                         "Evaluation failed, a '{}' operation has no right operand.",
                         operator.symbol
                     )));

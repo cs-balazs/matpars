@@ -54,14 +54,11 @@ impl Matpars {
         if self.variables.insert(name.to_string(), value).is_some() {
             Ok(())
         } else {
-            Err(InvalidVariableError::new(
-                format!(
-                    "Cannot set variable '{}', expected one of: {:?}",
-                    name,
-                    self.variables.keys().collect::<Vec<&String>>()
-                )
-                .as_str(),
-            ))
+            Err(InvalidVariableError(format!(
+                "Cannot set variable '{}', expected one of: {:?}",
+                name,
+                self.variables.keys().collect::<Vec<&String>>()
+            )))
         }
     }
     pub fn eval(&self) -> Result<f64, EvaluationError> {

@@ -4,39 +4,19 @@ use std::{
 };
 
 #[derive(Debug)]
-pub struct InvalidVariableError {
-    message: String,
-}
+pub struct InvalidVariableError(pub String);
 
 #[derive(Debug)]
-pub struct EvaluationError {
-    message: String,
-}
+pub struct EvaluationError(pub String);
 
 impl Display for InvalidVariableError {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
-        write!(f, "{}", self.message)
+        write!(f, "{}", self.0)
     }
 }
 impl Display for EvaluationError {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
-        write!(f, "{}", self.message)
-    }
-}
-
-impl InvalidVariableError {
-    pub fn new<T: Display>(message: T) -> InvalidVariableError {
-        InvalidVariableError {
-            message: message.to_string(),
-        }
-    }
-}
-
-impl EvaluationError {
-    pub fn new<T: Display>(message: T) -> EvaluationError {
-        EvaluationError {
-            message: message.to_string(),
-        }
+        write!(f, "{}", self.0)
     }
 }
 
